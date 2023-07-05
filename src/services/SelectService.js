@@ -6,16 +6,24 @@ import MessageRespository from '../repo/MessageRespository';
 
 dotenv.config();
 
+function replaceEndingSlash(url) {
+  if (url.endsWith('/')) {
+    return url.slice(0, -1);
+  }
+  return url;
+}
 const select = async (selectRequest) => {
   const logger = LoggingService.getLogger('SelectService');
   const { message } = selectRequest;
-  const context = ContextBuilder.getContextWithContext('select', selectRequest.context);
+  const context = ContextBuilder.getContextWithContext(
+    'select',
+    selectRequest.context,
+  );
   const selectPayload = {
     context,
     message,
   };
-  const url = `${selectRequest.context.bpp_uri}/select`;
-
+  const url = `${replaceEndingSlash(selectRequest.context.bpp_uri)}/select`;
   const selectResponse = await Api.doPost(url, JSON.stringify(selectPayload));
   const responseText = await selectResponse.text();
   logger.debug(`Response ${responseText}`);

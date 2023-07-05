@@ -5,7 +5,12 @@ import LoggingService from './LoggingService';
 import MessageRespository from '../repo/MessageRespository';
 
 dotenv.config();
-
+function replaceEndingSlash(url) {
+  if (url.endsWith('/')) {
+    return url.slice(0, -1);
+  }
+  return url;
+}
 const confirm = async (confirmRequest) => {
   const logger = LoggingService.getLogger('ConfirmService');
   const context = ContextBuilder.getContextWithContext('confirm', confirmRequest.context);
@@ -14,7 +19,7 @@ const confirm = async (confirmRequest) => {
     context,
     message,
   };
-  const url = `${confirmRequest.context.bpp_uri}/confirm`;
+  const url = `${replaceEndingSlash(confirmRequest.context.bpp_uri)}/confirm`;
 
   const confirmResponse = await Api.doPost(url, JSON.stringify(confirmPayload));
   const responseText = await confirmResponse.text();
