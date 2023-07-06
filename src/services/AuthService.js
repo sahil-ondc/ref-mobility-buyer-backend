@@ -1,6 +1,8 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable consistent-return */
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import jwtDecode from 'jwt-decode';
 import User from '../database/models/User';
 
 const login = async (req, res) => {
@@ -74,7 +76,6 @@ const signUp = async (req, res) => {
 
     const payload = {
       user: {
-        // eslint-disable-next-line no-underscore-dangle
         id: user?._id,
         name: user.name,
         email: user.email,
@@ -92,8 +93,54 @@ const signUp = async (req, res) => {
     return error;
   }
 };
+const googleLogin = async (req, res) => {
+  const { googleAccessToken } = req.body;
+  const decoded = jwtDecode(googleAccessToken);
+  const currentUser = await User.findOne({
+    email: decoded?.email,
+  });
+  if (!currentUser) {
+    const user = new User({
+      name: decoded.name,
+      email: decoded.email,
+      avatar: decoded.picture,
+    });
+    await user.save();
+    const payload = {
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    };
+    const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+      expiresIn: '1d',
+    });
+
+    return res.status(200).json({
+      message: 'Login Success',
+      data: { token, user },
+    });
+  }
+  const payload = {
+    user: {
+      id: currentUser._id,
+      name: currentUser.name,
+      email: currentUser.email,
+    },
+  };
+  const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+    expiresIn: '1d',
+  });
+
+  return res.status(200).json({
+    message: 'Login Success',
+    data: { token, user: currentUser },
+  });
+};
 
 export default {
   login,
   signUp,
+  googleLogin,
 };

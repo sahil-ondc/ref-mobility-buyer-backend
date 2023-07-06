@@ -46,6 +46,7 @@ app.get('/', (req, res) => {
 
 app.post('/login', AuthController.login);
 app.post('/sign-up', AuthController.signUp);
+app.post('/google-login', AuthController.googleLogin);
 
 app.post('/search', SearchController.search);
 app.get('/search', SearchController.searchResult);
