@@ -3,6 +3,7 @@ import * as dotenv from 'dotenv';
 import { v4 as uuid } from 'uuid';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import AuthController from './controllers/AuthController';
 import ConfirmController from './controllers/ConfirmController';
 import OnConfirmController from './controllers/OnConfirmController';
 import OnSearchController from './controllers/OnSearchController';
@@ -19,6 +20,7 @@ import OnTrackController from './controllers/OnTrackController';
 import SubscribeController from './controllers/SubscribeController';
 import OnSubscribeController from './controllers/OnSubscribeController';
 import SignatureHelper from './utilities/SignVerify/SignatureHelper';
+import dbConnect from './database/mongooseConnector';
 
 dotenv.config();
 process.env.REQUEST_ID = uuid();
@@ -41,6 +43,9 @@ app.use(express.static(path.join(dirname, 'public')));
 app.get('/', (req, res) => {
   res.send(`Sample BAP is running ${new Date()}`);
 });
+
+app.post('/login', AuthController.login);
+app.post('/sign-up', AuthController.signUp);
 
 app.post('/search', SearchController.search);
 app.get('/search', SearchController.searchResult);
@@ -81,8 +86,19 @@ const registerVerificationPage = async (application) => {
   });
 };
 
-app.listen(port, async () => {
-  logger.info(`Sample BAP listening on port ${port}`);
+// configure mongodb connection
+if (process.env.MONGO_DB_URL) {
+  dbConnect()
+    .then(() => {
+      logger.info('Database connection successful');
 
-  await registerVerificationPage(app);
-});
+      app.listen(port, async () => {
+        logger.info(`Sample BAP listening on port ${port}`);
+        await registerVerificationPage(app);
+      });
+    })
+    .catch((error) => {
+      logger.error('Error connecting to the database', error);
+      return error;
+    });
+}
