@@ -27,7 +27,8 @@
     "node-cache": "^5.1.2",
     "node-fetch": "^3.3.0",
     "pug": "^3.0.2",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "yup": "^1.2.0"
   },
   "devDependencies": {
     "@vitest/coverage-c8": "^0.29.7",

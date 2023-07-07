@@ -10,6 +10,7 @@ const dbConnect = async () => {
   return mongoose.connect(dbUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useFindAndModify: false,
   });
 };
 

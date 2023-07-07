@@ -4,10 +4,13 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import jwtDecode from 'jwt-decode';
 import User from '../database/models/User';
+import { loginSchema } from '../utilities/Validator';
 
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const requestedBody = req.body;
+    await loginSchema.validate(requestedBody);
+    const { email, password } = requestedBody;
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ success: false, message: 'Invalid Email' });
@@ -39,6 +42,7 @@ const login = async (req, res) => {
           return res.status(200).json({
             message: 'Login Success',
             data: { token, user },
+            success: true,
           });
         },
       );
@@ -88,6 +92,7 @@ const signUp = async (req, res) => {
     return res.status(200).json({
       message: 'Signup Success',
       data: { token },
+      success: true,
     });
   } catch (error) {
     return error;

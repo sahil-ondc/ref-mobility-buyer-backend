@@ -4,6 +4,7 @@ import { v4 as uuid } from 'uuid';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import AuthController from './controllers/AuthController';
+import TripController from './controllers/TripController';
 import ConfirmController from './controllers/ConfirmController';
 import OnConfirmController from './controllers/OnConfirmController';
 import OnSearchController from './controllers/OnSearchController';
@@ -21,6 +22,7 @@ import SubscribeController from './controllers/SubscribeController';
 import OnSubscribeController from './controllers/OnSubscribeController';
 import SignatureHelper from './utilities/SignVerify/SignatureHelper';
 import dbConnect from './database/mongooseConnector';
+import authenticate from './middleware/Authentication';
 
 dotenv.config();
 process.env.REQUEST_ID = uuid();
@@ -47,6 +49,9 @@ app.get('/', (req, res) => {
 app.post('/login', AuthController.login);
 app.post('/sign-up', AuthController.signUp);
 app.post('/google-login', AuthController.googleLogin);
+
+app.post('/create-trip', authenticate, TripController.createTrip);
+app.get('/all-trips', authenticate, TripController.getAllTrips);
 
 app.post('/search', SearchController.search);
 app.get('/search', SearchController.searchResult);
