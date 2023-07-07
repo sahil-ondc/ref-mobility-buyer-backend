@@ -120,6 +120,7 @@ const googleLogin = async (req, res) => {
     return res.status(200).json({
       message: 'Login Success',
       data: { token, user },
+      success: true,
     });
   }
   const payload = {
@@ -136,6 +137,7 @@ const googleLogin = async (req, res) => {
   return res.status(200).json({
     message: 'Login Success',
     data: { token, user: currentUser },
+    success: true,
   });
 };
 
