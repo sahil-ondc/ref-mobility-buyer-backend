@@ -16,7 +16,16 @@ const getAllTrips = async (req, res, next) => {
   }
 };
 
+const getsingleTrip = async (req, res, next) => {
+  try {
+    await TripService.getsingleTrip(req, res);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   createTrip,
   getAllTrips,
+  getsingleTrip,
 };

@@ -24,8 +24,26 @@ const googleLogin = async (req, res, next) => {
   }
 };
 
+const userDetails = async (req, res, next) => {
+  try {
+    await AuthService.userDetails(req, res);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateUserDetails = async (req, res, next) => {
+  try {
+    await AuthService.updateUserDetails(req, res);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   login,
   signUp,
   googleLogin,
+  userDetails,
+  updateUserDetails,
 };

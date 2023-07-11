@@ -7,11 +7,6 @@ const UserSchema = new mongoose.Schema(
     password: { type: String },
     phone: { type: String },
     avatar: { type: String },
-    trips: [
-      {
-        tripId: { type: mongoose.Schema.Types.ObjectId, ref: 'trip' },
-      },
-    ],
   },
   { timestamps: true },
 );

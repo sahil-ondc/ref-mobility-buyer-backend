@@ -29,6 +29,7 @@ const createTrip = async (req, res) => {
     });
 
     await trip.save();
+
     return res.status(200).json({
       message: 'Trip Created Successfully',
       data: trip,
@@ -51,7 +52,7 @@ const getAllTrips = async (req, res) => {
     if (!trips) {
       return res.status(200).json({
         message: 'No Trips Found',
-        success: true,
+        success: false,
       });
     }
 
@@ -67,8 +68,32 @@ const getAllTrips = async (req, res) => {
     });
   }
 };
+const getsingleTrip = async (req, res) => {
+  try {
+    const { tripId } = req.params;
+    const trip = await Trip.findById(tripId).populate('user');
+    if (!trip) {
+      return res.status(200).json({
+        message: 'No Trip Found With This Id',
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      message: 'Trip Details',
+      data: trip,
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error?.message ? error.message : error,
+    });
+  }
+};
 
 export default {
   createTrip,
   getAllTrips,
+  getsingleTrip,
 };

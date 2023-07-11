@@ -95,27 +95,48 @@ const signUp = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    return error;
+    res.status(500).json({
+      success: false,
+      message: error?.message ? error.message : error,
+    });
   }
 };
 const googleLogin = async (req, res) => {
-  const { googleAccessToken } = req.body;
-  const decoded = jwtDecode(googleAccessToken);
-  const currentUser = await User.findOne({
-    email: decoded?.email,
-  });
-  if (!currentUser) {
-    const user = new User({
-      name: decoded.name,
-      email: decoded.email,
-      avatar: decoded.picture,
+  try {
+    const { googleAccessToken } = req.body;
+    const decoded = jwtDecode(googleAccessToken);
+    const currentUser = await User.findOne({
+      email: decoded?.email,
     });
-    await user.save();
+    if (!currentUser) {
+      const user = new User({
+        name: decoded.name,
+        email: decoded.email,
+        avatar: decoded.picture,
+      });
+      await user.save();
+      const payload = {
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+        },
+      };
+      const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+        expiresIn: '1d',
+      });
+
+      return res.status(200).json({
+        message: 'Login Success',
+        data: { token, user },
+        success: true,
+      });
+    }
     const payload = {
       user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
+        id: currentUser._id,
+        name: currentUser.name,
+        email: currentUser.email,
       },
     };
     const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
@@ -124,30 +145,59 @@ const googleLogin = async (req, res) => {
 
     return res.status(200).json({
       message: 'Login Success',
-      data: { token, user },
+      data: { token, user: currentUser },
       success: true,
     });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error?.message ? error.message : error,
+    });
   }
-  const payload = {
-    user: {
-      id: currentUser._id,
-      name: currentUser.name,
-      email: currentUser.email,
-    },
-  };
-  const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
-    expiresIn: '1d',
-  });
+};
+const userDetails = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    return res.status(200).json({
+      message: 'User Details',
+      data: user,
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error?.message ? error.message : error,
+    });
+  }
+};
 
-  return res.status(200).json({
-    message: 'Login Success',
-    data: { token, user: currentUser },
-    success: true,
-  });
+const updateUserDetails = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { customField, data } = req.body;
+    const filter = { _id: userId };
+    const update = { [customField]: data };
+    const user = await User.findByIdAndUpdate(filter, update, {
+      returnOriginal: false,
+    });
+    return res.status(200).json({
+      message: 'User details has been updated',
+      data: user,
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error?.message ? error.message : error,
+    });
+  }
 };
 
 export default {
   login,
   signUp,
   googleLogin,
+  userDetails,
+  updateUserDetails,
 };

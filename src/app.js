@@ -50,8 +50,12 @@ app.post('/login', AuthController.login);
 app.post('/sign-up', AuthController.signUp);
 app.post('/google-login', AuthController.googleLogin);
 
+app.get('/user-details', authenticate, AuthController.userDetails);
+app.post('/update-user', authenticate, AuthController.updateUserDetails);
+
 app.post('/create-trip', authenticate, TripController.createTrip);
 app.get('/all-trips', authenticate, TripController.getAllTrips);
+app.get('/trip/:tripId', authenticate, TripController.getsingleTrip);
 
 app.post('/search', SearchController.search);
 app.get('/search', SearchController.searchResult);
