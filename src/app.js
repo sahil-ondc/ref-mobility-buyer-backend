@@ -51,7 +51,8 @@ app.post('/sign-up', AuthController.signUp);
 app.post('/google-login', AuthController.googleLogin);
 
 app.get('/user-details', authenticate, AuthController.userDetails);
-app.post('/update-user', authenticate, AuthController.updateUserDetails);
+app.post('/user-detail', authenticate, AuthController.updateUserDetail);
+app.put('/user-details', authenticate, AuthController.updateUserDetails);
 
 app.post('/create-trip', authenticate, TripController.createTrip);
 app.get('/all-trips', authenticate, TripController.getAllTrips);

@@ -48,7 +48,7 @@ const getAllTrips = async (req, res) => {
     const userId = req.user.id;
     const trips = await Trip.find({
       user: userId,
-    });
+    }).populate('user');
     if (!trips) {
       return res.status(200).json({
         message: 'No Trips Found',

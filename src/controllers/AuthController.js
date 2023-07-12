@@ -32,6 +32,13 @@ const userDetails = async (req, res, next) => {
   }
 };
 
+const updateUserDetail = async (req, res, next) => {
+  try {
+    await AuthService.updateUserDetail(req, res);
+  } catch (error) {
+    next(error);
+  }
+};
 const updateUserDetails = async (req, res, next) => {
   try {
     await AuthService.updateUserDetails(req, res);
@@ -45,5 +52,6 @@ export default {
   signUp,
   googleLogin,
   userDetails,
+  updateUserDetail,
   updateUserDetails,
 };

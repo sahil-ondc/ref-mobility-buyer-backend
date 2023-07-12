@@ -56,7 +56,9 @@ const login = async (req, res) => {
 };
 const signUp = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const {
+      name, email, password, phone,
+    } = req.body;
 
     // check if the user is exists
     let user = await User.findOne({ email });
@@ -75,6 +77,7 @@ const signUp = async (req, res) => {
       name,
       email,
       password: passwordHash,
+      phone,
     });
     await user.save();
 
@@ -171,8 +174,7 @@ const userDetails = async (req, res) => {
     });
   }
 };
-
-const updateUserDetails = async (req, res) => {
+const updateUserDetail = async (req, res) => {
   try {
     const userId = req.user.id;
     const { customField, data } = req.body;
@@ -193,11 +195,33 @@ const updateUserDetails = async (req, res) => {
     });
   }
 };
+const updateUserDetails = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { userDetail } = req.body;
+    // const filter = { _id: userId };
+
+    const user = await User.findByIdAndUpdate(userId, userDetail, {
+      returnOriginal: false,
+    });
+    return res.status(200).json({
+      message: 'User details has been updated',
+      data: user,
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error?.message ? error.message : error,
+    });
+  }
+};
 
 export default {
   login,
   signUp,
   googleLogin,
   userDetails,
+  updateUserDetail,
   updateUserDetails,
 };
