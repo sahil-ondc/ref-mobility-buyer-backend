@@ -26,7 +26,6 @@ import authenticate from './middleware/Authentication';
 
 dotenv.config();
 process.env.REQUEST_ID = uuid();
-
 const app = express();
 const logger = LoggingService.getLogger('App');
 const port = process.env.BUYER_APP_PORT ? process.env.BUYER_APP_PORT : 2010;
@@ -42,48 +41,48 @@ app.set('view engine', 'pug');
 app.set('views', path.join(dirname, 'views'));
 app.use(express.static(path.join(dirname, 'public')));
 
-app.get('/', (req, res) => {
+app.get('/v1', (req, res) => {
   res.send(`Sample BAP is running ${new Date()}`);
 });
 
-app.post('/login', AuthController.login);
-app.post('/sign-up', AuthController.signUp);
-app.post('/google-login', AuthController.googleLogin);
+app.post('/v1/login', AuthController.login);
+app.post('/v1/sign-up', AuthController.signUp);
+app.post('/v1/google-login', AuthController.googleLogin);
 
-app.get('/user-details', authenticate, AuthController.userDetails);
-app.post('/user-detail', authenticate, AuthController.updateUserDetail);
-app.put('/user-details', authenticate, AuthController.updateUserDetails);
+app.get('/v1/user-details', authenticate, AuthController.userDetails);
+app.post('/v1/user-detail', authenticate, AuthController.updateUserDetail);
+app.put('/v1/user-details', authenticate, AuthController.updateUserDetails);
 
-app.post('/create-trip', authenticate, TripController.createTrip);
-app.get('/all-trips', authenticate, TripController.getAllTrips);
-app.get('/trip/:tripId', authenticate, TripController.getsingleTrip);
+app.post('/v1/create-trip', authenticate, TripController.createTrip);
+app.get('/v1/all-trips', authenticate, TripController.getAllTrips);
+app.get('/v1/trip/:tripId', authenticate, TripController.getsingleTrip);
 
-app.post('/search', SearchController.search);
-app.get('/search', SearchController.searchResult);
-app.post('/on_search', OnSearchController.onSearch);
+app.post('/v1/search', SearchController.search);
+app.get('/v1/search', SearchController.searchResult);
+app.post('/v1/on_search', OnSearchController.onSearch);
 
-app.post('/select', SelectController.select);
-app.post('/on_select', OnSelectController.onSelect);
-app.get('/select', SelectController.selectResult);
+app.post('/v1/select', SelectController.select);
+app.post('/v1/on_select', OnSelectController.onSelect);
+app.get('/v1/select', SelectController.selectResult);
 
-app.post('/confirm', ConfirmController.confirm);
-app.post('/on_confirm', OnConfirmController.onConfirm);
-app.get('/confirm', ConfirmController.confirmResult);
+app.post('/v1/confirm', ConfirmController.confirm);
+app.post('/v1/on_confirm', OnConfirmController.onConfirm);
+app.get('/v1/confirm', ConfirmController.confirmResult);
 
-app.post('/init', InitController.init);
-app.post('/on_init', OnInitController.onInit);
-app.get('/init', InitController.initResult);
+app.post('/v1/init', InitController.init);
+app.post('/v1/on_init', OnInitController.onInit);
+app.get('/v1/init', InitController.initResult);
 
-app.post('/status', StatusController.status);
-app.post('/on_status', OnStatusController.onStatus);
-app.get('/status', StatusController.statusResult);
+app.post('/v1/status', StatusController.status);
+app.post('/v1/on_status', OnStatusController.onStatus);
+app.get('/v1/status', StatusController.statusResult);
 
-app.post('/track', TrackController.track);
-app.post('/on_track', OnTrackController.onTrack);
-app.get('/track', TrackController.trackResult);
+app.post('/v1/track', TrackController.track);
+app.post('/v1/on_track', OnTrackController.onTrack);
+app.get('/v1/track', TrackController.trackResult);
 
-app.post('/subscribe', SubscribeController.subscribe);
-app.post('/on_subscribe', OnSubscribeController.onSubscribe);
+app.post('/v1/subscribe', SubscribeController.subscribe);
+app.post('/v1/on_subscribe', OnSubscribeController.onSubscribe);
 
 const registerVerificationPage = async (application) => {
   application.get('/ondc-site-verification.html', async (req, res) => {
