@@ -199,7 +199,6 @@ const updateUserDetails = async (req, res) => {
   try {
     const userId = req.user.id;
     const { userDetail } = req.body;
-    // const filter = { _id: userId };
 
     const user = await User.findByIdAndUpdate(userId, userDetail, {
       returnOriginal: false,
